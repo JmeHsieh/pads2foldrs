@@ -1,0 +1,4 @@
+beautifulsoup4==4.5.1
+gitdb2==2.0.0
+GitPython==2.0.9
+smmap2==2.0.0
