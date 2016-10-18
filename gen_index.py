@@ -135,21 +135,26 @@ def main():
     last_commit_fn = 'last_commit.txt'
 
     repo_info = get_repo_info(join(base_dir, config_fn), data_dir)
-    if not repo_info:
+    if repo_info:
+        repo_url, repo_path = repo_info
+    else:
         return
 
-    repo_url, repo_path = repo_info
     hackpads = Hackpads(repo_url, repo_path)
-    hackpads.pull_repo()
+    hackpads.remote().pull()
 
     last_commit = get_last_commit(join(data_dir, last_commit_fn))
-    diff_pads = hackpads.get_diffs(last_commit)
-    if not diff_pads:
+    diff_pads = hackpads.get_diff_pads(last_commit)
+    if diff_pads:
+        logging.info('current commit:{}'.format(hackpads.head.commit))
+        logging.info('last commit:{}'.format(last_commit))
+        logging.info('diff pads: {}'.format('\n' + '\n'.join(diff_pads)))
+    else:
         logging.info('no diff pads since last scan.')
         return
 
-    gen_foldr_index(diff_pads, hackpads.repo_path, data_dir)
-    update_last_commit(hackpads.latest_commit(), join(data_dir, last_commit_fn))
+    gen_foldr_index(diff_pads, hackpads.working_dir, data_dir)
+    update_last_commit(str(hackpads.head.commit), join(data_dir, last_commit_fn))
 
 
 if __name__ == '__main__':
