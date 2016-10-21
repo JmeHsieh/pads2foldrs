@@ -98,6 +98,8 @@ def _merged_foldr(old, new):
         elif isinstance(v, dict):
             raise NotImplementedError
         else:
+            if k in _old and k == 'url' and 'beta' not in v:
+                continue
             _old.update({k: v})
     return _old
 
